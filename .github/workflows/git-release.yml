@@ -40,6 +40,6 @@ jobs:
         tag_name: ${{ steps.release-tag.outputs.tag }}
         release_name: ${{ steps.release-tag.outputs.tag }}
         body: |
-          "${{ github.event.pull_request.commits_url }}"
+          "${{ github.event.pull_request.commits }}"
         draft: false
         prerelease: false
