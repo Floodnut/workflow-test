@@ -13,6 +13,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 0
 
     - name: Check PR Merge
       id: check_merge
@@ -24,9 +27,8 @@ jobs:
     - name: Get PR Commits
       id: pr_commits
       run: |
-        while [ -z $( git merge-base  ${{ github.base_ref }}  ${{ github.head_ref }}) ]; do
-            git fetch -q --deepen=10 origin ${{ github.base_ref }}  ${{ github.head_ref }};
-        done
+        git fetch
+        git log origin/${{ github.event.pull_request.base.ref }}..
         
     - name: Get Commit Message
       run: |
