@@ -27,7 +27,7 @@ jobs:
     - name: Get PR Commits
       id: pr_commits
       run: |
-        echo "$(git log --oneline ${{ github.event.before }}...${{ github.sha }})"
+        echo "$(git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }})"
         
     - name: Get Commit Message
       run: |
