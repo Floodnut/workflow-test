@@ -32,7 +32,7 @@ jobs:
     - name: Parse body from Merged-PR
       id: release-body
       run: |
-        PR_CONTENT="${{ github.event.pull_request.body }}"
+        echo "PR_CONTENT=$(git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }})" >> $GITHUB_ENV
 
     ## 릴리즈 생성
     - name: Create Release
@@ -43,6 +43,6 @@ jobs:
         tag_name: ${{ steps.release-tag.outputs.tag }}
         release_name: ${{ steps.release-tag.outputs.tag }}
         body: |
-          $(git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }})
+          $PR_CONTENT
         draft: false
         prerelease: false
