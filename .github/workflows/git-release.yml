@@ -29,6 +29,12 @@ jobs:
       run: |
         echo "PR Commits: ${{ steps.pr_commits.outputs.commits }}"
 
+    - name: Get Commit Message
+      run: |
+        MSG=$(git log --format=%B -n 1 ${{ github.event.after }})
+        echo "::set-env name=COMMIT_MESSAGE::${MSG}"
+        echo "Commit SHA: ${{github.event.after}}, commit message: ${{env.COMMIT_MESSAGE}} (or ${COMMIT_MESSAGE})"
+
     ## 병합 정보에서 버전 정보 추출
     - name: Parse version from Merged-PR
       id: release-tag
