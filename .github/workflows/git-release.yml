@@ -33,7 +33,7 @@ jobs:
     - name: Get Commits
       id: get-commits
       run: |
-        echo $(git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }})
+        git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }}
         
     ## 릴리즈 생성
     - name: Create Release
