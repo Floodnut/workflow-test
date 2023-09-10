@@ -29,9 +29,10 @@ jobs:
       id: release-tag
       run: echo "tag=$(echo '${{ github.event.pull_request.title }}' | egrep -o 'v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}[a-z]{0,2}')" >> $GITHUB_OUTPUT
 
+    ## 커밋 로그 추출
     - name: Get Commits
       id: get-commits
-      run: echo "PR_CONTENT=$(git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }})" >> $GITHUB_OUTPUT
+      run: echo "::set-output name=PR_CONTENT::$(git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }})"
         
     ## 릴리즈 생성
     - name: Create Release
