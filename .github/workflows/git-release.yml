@@ -21,6 +21,12 @@ jobs:
         echo "PR from dev to main has been merged."
         echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
+    - name: Get PR Commits
+      id: pr_commits
+      run: |
+        COMMITS=$(git log --oneline ${{ github.event.before }}...${{ github.sha }})
+        echo "PR Commits: $COMMITS"
+
     - name: Get Commit Message
       run: |
         MSG=$(git log --format=%B -n 1 ${{ github.event.after }})
