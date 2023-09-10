@@ -21,6 +21,14 @@ jobs:
         echo "PR from dev to main has been merged."
         echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
 
+    - name: Get PR Commits
+      id: pr_commits
+      run: echo "::set-output name=commits::$(git log --oneline ${{ github.event.before }}..${{ github.event.after }})"
+      
+    - name: Display PR Commits
+      run: |
+        echo "PR Commits: ${{ steps.pr_commits.outputs.commits }}"
+
     ## 병합 정보에서 버전 정보 추출
     - name: Parse version from Merged-PR
       id: release-tag
