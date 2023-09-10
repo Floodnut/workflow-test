@@ -32,7 +32,9 @@ jobs:
     ## 커밋 로그 추출
     - name: Get Commits
       id: get-commits
-      run: echo "::set-output name=PR_CONTENT::$(git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }})"
+      run: |
+        GIT_LOG=$(git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }})
+        echo "::set-output name=PR_CONTENT::$GIT_LOG
         
     ## 릴리즈 생성
     - name: Create Release
@@ -42,6 +44,8 @@ jobs:
       with:
         tag_name: ${{ steps.release-tag.outputs.tag }}
         release_name: ${{ steps.release-tag.outputs.tag }}
-        body: ${{ steps.get-commits.outputs.PR_CONTENT }}
+        body: |
+          ## Changes
+          ${{ steps.get-commits.outputs.PR_CONTENT }}
         draft: false
         prerelease: false
