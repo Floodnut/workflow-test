@@ -34,7 +34,7 @@ jobs:
       id: get-commits
       run: |
         GIT_LOG=$(git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }})
-        echo "::set-output name=PR_CONTENT::$GIT_LOG
+        echo $GIT_LOG
         
     ## 릴리즈 생성
     - name: Create Release
@@ -46,6 +46,6 @@ jobs:
         release_name: ${{ steps.release-tag.outputs.tag }}
         body: |
           ## Changes
-          ${{ steps.get-commits.outputs.PR_CONTENT }}
+        
         draft: false
         prerelease: false
