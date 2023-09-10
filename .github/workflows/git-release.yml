@@ -32,7 +32,7 @@ jobs:
     - name: Get Commit Message
       run: |
         MSG=$(git log --format=%B -n 1 ${{ github.event.after }})
-        echo "::set-env name=COMMIT_MESSAGE::${MSG}"
+        echo "name=COMMIT_MESSAGE::${MSG}" >> $GITHUB_ENV
         echo "Commit SHA: ${{github.event.after}}, commit message: ${{env.COMMIT_MESSAGE}} (or ${COMMIT_MESSAGE})"
 
     ## 병합 정보에서 버전 정보 추출
