@@ -5,45 +5,82 @@ on:
     branches: [main]
     types: [closed]
 
-
 jobs:
-  git-release:
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop' && github.event.pull_request.merged == true
+  hot-fix-release:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-20.04
     
     steps:
-    - uses: actions/checkout@v3
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-        fetch-depth: 0
+    - name: Get latest tag
+      id: get-latest-tag
+      run: echo "latest_tag=$(echo '$(git describe --tags --abbrev=0)'" >> $GITHUB_OUTPUT
 
-    - name: Check PR Merge
-      id: check_merge
-      if: github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop' && github.event.pull_request.merged == true
-      run: |
-        echo "PR from dev to main has been merged."
-        echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
-
-    ## 병합 정보에서 버전 정보 추출
-    - name: Parse version from Merged-PR
-      id: release-tag
-      run: echo "tag=$(echo '${{ github.event.pull_request.title }}' | egrep -o 'v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}[a-z]{0,2}')" >> $GITHUB_OUTPUT
-
-    ## 커밋 로그 추출
-    - name: Get Commits
-      id: get-commits
-      run: |
-        echo "## Changes" > ./git.log.txt
-        git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }} >> ./git.log.txt
-        
-    ## 릴리즈 생성
-    - name: Create Release
-      uses: actions/create-release@v1
+    - name: Print latest tag
+      run: echo "Latest tag is ${{ steps.get-latest-tag.outputs.latest_tag }}."
+      
+    - name: Create Hotfix Release
+      id: release
+      uses: Floodnut/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CICD }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
+        hotfix: true
+        latest_latest_tag: ${{ steps.get-latest-tag.outputs.latest_tag }}
         tag_name: ${{ steps.release-tag.outputs.tag }}
         release_name: ${{ steps.release-tag.outputs.tag }}
         body_path: ./git.log.txt
         draft: false
         prerelease: false
+
+
+  git-release:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop'
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Check PR Merge
+        id: check-merge
+        run: |
+          echo "PR from dev to main has been merged."
+          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+
+      - name: Parse version from Merged-PR
+        id: release-tag
+        run: |
+          echo "tag=$(echo '${{ github.event.pull_request.title }}' | egrep -o 'v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}[a-z]{0,2}')" >> $GITHUB_OUTPUT
+          echo "major_tag=$(echo '${{ github.event.pull_request.title }}' | egrep -o 'v[0-9]{1,3}\.[0-9]{1,3}\')" >> $GITHUB_OUTPUT
+
+      - name: Get Commits
+        id: get-commits
+        run: |
+          echo "## Changes" > ./git.log.txt
+          git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }} >> ./git.log.txt
+
+      - name: Create Release
+        id: release
+        uses: Floodnut/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.release-tag.outputs.tag }}
+          release_name: ${{ steps.release-tag.outputs.tag }}
+          body_path: ./git.log.txt
+          draft: false
+          prerelease: false
+
+      - name: Create Draft Release
+        if: ${{ failure() && steps.release.outcome == 'failure' }}
+        uses: Floodnut/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: draft_tag
+          release_name: draft Release
+          body: |
+            ## Changes
+          draft: true
+          prerelease: false
