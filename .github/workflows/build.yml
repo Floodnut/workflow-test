@@ -19,9 +19,8 @@ jobs:
 
       - name: Validate branch name
         run: |
-          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
-          echo current branch is $branch_name.
-          if [[ "$branch_name" =~ ^model\/(\d+\.\d+)\/(.+)$ ]]; then
+          echo current branch is ${{ github.event.inputs.model-branch }}.
+          if [[ ${{ github.event.inputs.model-branch }} =~ ^model\/(\d+\.\d+)\/(.+)$ ]]; then
             echo "Branch name is valid."
             echo "valid=true" >> $GITHUB_OUTPUT
           else
