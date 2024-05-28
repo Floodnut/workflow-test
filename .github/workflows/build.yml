@@ -1,0 +1,41 @@
+name: Trainer Build and Push
+
+on:
+  workflow_dispatch:
+    inputs:
+      model-branch:
+        description: 'Model Branch'
+        required: true
+      model-id:
+        description: 'model-id (e.g. 1.0, 1.1, 1.2)'
+        required: true
+
+jobs:
+  is_valid_branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Validate branch name
+        run: |
+          branch_name=$(echo "${GITHUB_REF#refs/heads/}")
+          echo current branch is $branch_name.
+          if [[ "$branch_name" =~ ^model\/(\d+\.\d+)\/(.+)$ ]]; then
+            echo "Branch name is valid."
+            echo "valid=true" >> $GITHUB_OUTPUT
+          else
+            echo "Branch name is not valid."
+            echo "valid=false" >> $GITHUB_OUTPUT
+          fi
+    
+  build:
+    needs: [is_valid_branch]
+    runs-on: ubuntu-latest
+    if: needs.is_valid_branch.outputs.valid == 'true'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: good
+        run: echo ${{ needs.is_valid_branch.outputs.valid }}
