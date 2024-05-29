@@ -20,7 +20,7 @@ jobs:
       - name: Validate branch name
         run: |
           echo current branch is ${{ github.ref }}
-          if [[ "refs/heads/${{ github.event.inputs.model-branch }}" =~ "${{ github.ref }}" ]]; then
+          if [[ "refs/heads/${{ github.event.inputs.model-branch }}" == "${{ github.ref }}" ]]; then
             echo "Branch name is valid."
             echo "valid=true" >> $GITHUB_OUTPUT
           else
@@ -31,7 +31,7 @@ jobs:
   build:
     needs: [is_valid_branch]
     runs-on: ubuntu-latest
-    if: needs.is_valid_branch.outputs.valid == 'true'
+
 
     steps:
       - uses: actions/checkout@v3
