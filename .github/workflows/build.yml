@@ -20,8 +20,7 @@ jobs:
       - name: Validate branch name
         run: |
           echo current branch is ${{ github.event.inputs.model-branch }}
-          result=$(echo "${{ github.event.inputs.model-branch }}" | egrep "^(model)\/(\d)+(\.)(\d)+\/.+")
-          if [[ ${{ github.event.inputs.model-branch }} == $result ]]; then
+          if [[ ${{ github.event.inputs.model-branch }} == "model/1.0/branch" ]]; then
             echo "Branch name is valid."
             echo "valid=true" >> $GITHUB_OUTPUT
           else
