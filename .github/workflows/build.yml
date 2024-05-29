@@ -19,8 +19,8 @@ jobs:
 
       - name: Validate branch name
         run: |
-          echo current branch is $GITHUB_HEAD_REF
-          if [[ ${{ github.event.inputs.model-branch }} == $GITHUB_HEAD_REF ]]; then
+          echo current branch is ${{ github.head_ref }}
+          if [[ ${{ github.event.inputs.model-branch }} == ${{ github.head_ref }}]]; then
             echo "Branch name is valid."
             echo "valid=true" >> $GITHUB_OUTPUT
           else
