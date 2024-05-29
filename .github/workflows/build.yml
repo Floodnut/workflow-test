@@ -22,16 +22,16 @@ jobs:
           echo current branch is ${{ github.ref }}
           if [[ "refs/heads/${{ github.event.inputs.model-branch }}" == "${{ github.ref }}" ]]; then
             echo "Branch name is valid."
-            echo "valid=true" >> $GITHUB_OUTPUT
+            echo "valid=true" >> "$GITHUB_OUTPUT"
           else
             echo "Branch name is not valid."
-            echo "valid=false" >> $GITHUB_OUTPUT
+            echo "valid=false" >> "$GITHUB_OUTPUT"
           fi
     
   build:
     needs: [is_valid_branch]
     runs-on: ubuntu-latest
-
+    if: ${{ needs.is_valid_branch.outputs.valid}} == "true"
 
     steps:
       - uses: actions/checkout@v3
