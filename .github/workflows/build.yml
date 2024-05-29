@@ -17,15 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set branch name
-        run: |
-          echo current branch is ${{ github.event.inputs.model-branch }}
-          echo "BRANCH_NAME=$(echo ${{ github.event.inputs.model-branch }} | egrep "^(model)\/(\d)+(\.)(\d)+\/.+")" >> $GITHUB_ENV
-
-
       - name: Validate branch name
         run: |
-          if [[ ${{ github.event.inputs.model-branch }} == $BRANCH_NAME ]]; then
+          echo current branch is $GITHUB_HEAD_REF
+          if [[ ${{ github.event.inputs.model-branch }} == $GITHUB_HEAD_REF ]]; then
             echo "Branch name is valid."
             echo "valid=true" >> $GITHUB_OUTPUT
           else
