@@ -1,0 +1,72 @@
+name: Tagging
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  job_1:
+    runs-on: ubuntu-20.04
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop'
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Check PR Merge
+        id: check-merge
+        run: |
+          echo "PR from dev to main has been merged."
+          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+
+      - name: Parse version from Merged-PR
+        id: release-tag
+        run: |
+          echo "tag=$(echo '${{ github.event.pull_request.title }}' | egrep -o 'v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}[a-z]{0,2}')" >> $GITHUB_OUTPUT
+          echo "major_tag=$(echo '${{ github.event.pull_request.title }}' | egrep -o 'v[0-9]{1,3}\.[0-9]{1,3}\')" >> $GITHUB_OUTPUT
+
+      - name: Get Commits
+        id: get-commits
+        run: |
+          echo "## Changes" > ./git.log.txt
+          git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }} >> ./git.log.txt
+
+      - name: Create Release
+        id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.release-tag.outputs.tag }}
+          release_name: ${{ steps.release-tag.outputs.tag }}
+          body_path: ./git.log.txt
+          draft: false
+          prerelease: false
+
+      - name: Create Draft Release
+        if: ${{ failure() && steps.release.outcome == 'failure' }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: draft_tag
+          release_name: draft Release
+          body: |
+            ## Changes
+          draft: true
+          prerelease: false
+
+  job_2:
+    needs: [job_1]
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Show tags
+        run: |
+          echo "latest_tag: ${{ steps.job_1.outputs.tag }}"
+          echo "latest_tag: ${{ steps.job_1.outputs.major_tag }}"
