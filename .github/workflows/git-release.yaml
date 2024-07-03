@@ -1,9 +1,7 @@
 name: Event Git Release
 
 on:
-  pull_request:
-    branches: [main]
-    types: [closed]
+  workflow_dispatch:
 
 jobs:
   hot-fix-release:
