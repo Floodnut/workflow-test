@@ -11,6 +11,9 @@ jobs:
     permissions:
       contents: write
     if: github.event.pull_request.merged == true
+    outputs:
+      tag: ${{ steps.release-tag.outputs.tag }}
+      major_tag: ${{ steps.release-tag.outputs.major_tag }}
 
     steps:
       - uses: actions/checkout@v3
