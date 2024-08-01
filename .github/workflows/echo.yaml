@@ -17,4 +17,8 @@ jobs:
       - name: echo
         run: |
           echo ${{ github.event.push }}
-          echo ${{ github.event.commits }}
+          echo ${{ github.event.push.commits }}
+          for var in "${{ github.event.push.commits }}"
+            do
+              echo var = $var.message
+            done
