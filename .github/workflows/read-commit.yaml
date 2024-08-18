@@ -1,0 +1,23 @@
+name: Read Commit Description
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  read-commit-description:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Read commit message description
+        run: |
+          # Get the latest commit hash
+          COMMIT_HASH=$(git rev-parse HEAD)
+
+          # Extract the description (body) from the commit message
+          COMMIT_DESCRIPTION=$(git log -1 --pretty=format:%B $COMMIT_HASH | tail -n +2)
+
+          echo "Commit Description: $COMMIT_DESCRIPTION"
