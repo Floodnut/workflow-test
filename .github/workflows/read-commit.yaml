@@ -12,6 +12,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Read commit message description from github push event
+        run: |
+          # Get the latest commit hash
+          COMMIT=${{ github.event.push.message }}
+          COMMITS=${{ github.event.push.commits}}
+
+          echo "Commit: $COMMIT"
+          echo "Commit: $COMMITS"
+
       - name: Read commit message description
         run: |
           # Get the latest commit hash
