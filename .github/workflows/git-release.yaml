@@ -24,7 +24,7 @@ jobs:
         id: check-merge
         run: |
           echo "PR from dev to main has been merged."
-          echo "PR_TITLE=`echo '${{ github.event.head_commit.message }}'`" >> $GITHUB_ENV
+          echo "${{ github.event.head_commit.message }}"
 
       - name: Parse version from Merged-PR
         id: release-tag
