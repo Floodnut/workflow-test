@@ -19,7 +19,7 @@ jobs:
           COMMITS=${{ github.event.push.commits}}
 
           echo ${{ github.event.message }}
-          echo ${{ github.event.commits }}
+          echo ${{ toJSON(github.event.commits[0].message }}
           echo ${{ github.event.before }}
           echo ${{ github.event.after }}
           echo ${{ github.event.base_ref }}
