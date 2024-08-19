@@ -45,7 +45,7 @@ jobs:
           if [ -z ${{ steps.parse-tag.outputs.major_tag }} ]; then
             echo "major_tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
           else
-            echo "tag=$(echo '${{ steps.parse-tag.outputs.major_tag }}')" >> $GITHUB_OUTPUT
+            echo "major_tag=$(echo '${{ steps.parse-tag.outputs.major_tag }}')" >> $GITHUB_OUTPUT
           fi
 
       - name: Get Commits
