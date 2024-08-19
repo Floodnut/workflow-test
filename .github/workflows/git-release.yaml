@@ -42,6 +42,7 @@ jobs:
           fi
 
       - name: Set release tag
+        id: set-release-tag
         run: |
           echo "release_tag=$(echo ${{ steps.release-tag.outputs.tag }} | cut -c1-20)" >> $GITHUB_OUTPUT
           echo "tag is ${{ steps.release-tag.outputs.tag }}"
@@ -59,8 +60,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.release-tag.outputs.release_tag }}
-          release_name: ${{ steps.release-tag.outputs.release_tag }}
+          tag_name: ${{ steps.set-release-tag.outputs.release_tag }}
+          release_name: ${{ steps.set-release-tag.outputs.release_tag }}
           body_path: ./git.log.txt
           draft: false
           prerelease: false
