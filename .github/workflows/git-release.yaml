@@ -36,10 +36,10 @@ jobs:
           echo "tag=$(echo $step_tag)" >> $GITHUB_OUTPUT \
             && echo "major_tag=$(echo $step_major_tag)" >> $GITHUB_OUTPUT
 
-          if [ -z "$step_tag" ]; then
+          if [ -z $step_tag ]; then
             echo "tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
           fi
-          if [ -z "$step_major_tag" ]; then
+          if [ -z $step_major_tag ]; then
             echo "major_tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
           fi
 
