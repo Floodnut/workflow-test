@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-env:
-  tag: ""
-  major_tag: ""
-  release_tag: ""
 
 jobs:
   git-release:
@@ -45,7 +41,9 @@ jobs:
             echo "major_tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
           fi
 
-          echo "release_tag=$(echo ${{ env.release_tag }} | cut -c1-20)" >>$GITHUB_OUTPUT
+      - name: Set release tag
+        run: |
+          echo "release_tag=$(echo ${{ env.tag }} | cut -c1-20)" >>$GITHUB_OUTPUT
 
           echo "tag is ${{ env.tag }}"
           echo "major_tag is ${{ env.major_tag }}"
