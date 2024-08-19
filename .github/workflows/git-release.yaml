@@ -13,6 +13,7 @@ jobs:
     outputs:
       tag: ${{ steps.release-tag.outputs.tag }}
       major_tag: ${{ steps.release-tag.outputs.major_tag }}
+      release_tag: 
 
     steps:
       - uses: actions/checkout@v3
@@ -39,6 +40,8 @@ jobs:
             echo "major_tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
           fi
 
+          echo "release_tag=${echo '${{ steps.release-tag.outputs.tag }}' | cut -c1-20)" >>$GITHUB_OUTPUT
+
       - name: Get Commits
         id: get-commits
         run: |
@@ -51,8 +54,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.release-tag.outputs.tag }}
-          release_name: ${{ steps.release-tag.outputs.tag }}
+          tag_name: ${{ steps.release-tag.outputs.release_tag }}
+          release_name: ${{ steps.release-tag.outputs.release_tag }}
           body_path: ./git.log.txt
           draft: false
           prerelease: false
