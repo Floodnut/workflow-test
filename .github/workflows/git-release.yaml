@@ -35,6 +35,7 @@ jobs:
 
       - name: Validate tag
         id: validate-tag
+        run: |
           if [ -z ${{ steps.parse-tag.outputs.tag }} ]; then
             echo "tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
           else
