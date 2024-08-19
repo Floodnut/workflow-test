@@ -42,6 +42,10 @@ jobs:
 
           echo "release_tag=$(echo $tag | cut -c1-20)" >>$GITHUB_OUTPUT
 
+          echo "tag is $tag"
+          echo "major_tag is $major_tag"
+          echo "github release_tag is $release_tag"
+
       - name: Get Commits
         id: get-commits
         run: |
