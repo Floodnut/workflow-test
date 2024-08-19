@@ -27,7 +27,7 @@ jobs:
           echo "PR from dev to main has been merged."
           echo "${{ github.event.head_commit.message }}"
 
-      - name: Parse version from Merged-PR
+      - name: Parse version from push
         id: parse-tag
         run: |
           echo "tag=$(echo '${{ github.event.head_commit.message }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}[a-z]{0,2}')" >> $GITHUB_OUTPUT \
