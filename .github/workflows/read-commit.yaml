@@ -18,11 +18,11 @@ jobs:
           COMMIT=${{ github.event.push.message }}
           COMMITS=${{ github.event.push.commits}}
 
-          echo ${{ github.message }}
-          echo ${{ github.commits }}
-          echo ${{ github.before }}
-          echo ${{ github.after }}
-          echo ${{ github.base_ref }}
+          echo ${{ github.event.message }}
+          echo ${{ github.event.commits }}
+          echo ${{ github.event.before }}
+          echo ${{ github.event.after }}
+          echo ${{ github.event.base_ref }}
 
       - name: Read commit message description
         run: |
