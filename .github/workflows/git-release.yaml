@@ -40,7 +40,7 @@ jobs:
             echo "major_tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
           fi
 
-          echo "release_tag=${echo '${{ steps.release-tag.outputs.tag }}' | cut -c1-20)" >>$GITHUB_OUTPUT
+          echo "release_tag=$(echo '${{ steps.release-tag.outputs.tag }}' | cut -c1-20)" >>$GITHUB_OUTPUT
 
       - name: Get Commits
         id: get-commits
