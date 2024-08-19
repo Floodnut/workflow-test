@@ -1,0 +1,64 @@
+name: Build and Tagging
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+jobs:
+  git-release:
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: write
+    if: github.event.pull_request.merged == true
+    outputs:
+      tag: ${{ steps.release-tag.outputs.tag }}
+      major_tag: ${{ steps.release-tag.outputs.major_tag }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Check PR Merge
+        id: check-merge
+        run: |
+          echo "PR from dev to main has been merged."
+          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+
+      - name: Parse version from Merged-PR
+        id: release-tag
+        run: |
+          echo "tag=$(echo '${{ github.event.pull_request.title }}' | egrep -o 'v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}[a-z]{0,2}')" >> $GITHUB_OUTPUT
+          echo "major_tag=$(echo '${{ github.event.pull_request.title }}' | egrep -o 'v[0-9]{1,3}\.[0-9]{1,3}')" >> $GITHUB_OUTPUT
+
+      - name: Get Commits
+        id: get-commits
+        run: |
+          echo "## Changes" > ./git.log.txt
+          git log --oneline ${{ github.event.pull_request.base.sha }}...${{ github.sha }} >> ./git.log.txt
+
+      - name: Create Release
+        id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.release-tag.outputs.tag }}
+          release_name: ${{ steps.release-tag.outputs.tag }}
+          body_path: ./git.log.txt
+          draft: false
+          prerelease: false
+
+  build:
+    needs: [git-release]
+    runs-on: ubuntu-20.04
+  
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: echo
+        run: |
+          echo tag is ${{ needs.git-release.outputs.tag }}
+          echo major-tag is ${{ needs.git-release.outputs.major_tag }}
