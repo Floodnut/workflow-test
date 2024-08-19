@@ -34,8 +34,10 @@ jobs:
 
           if [ -z "$tag" ]; then
             echo "tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
+          fi
           if [ -z "$major_tag" ]; then
             echo "major_tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
+          fi
 
       - name: Get Commits
         id: get-commits
