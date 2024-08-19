@@ -30,11 +30,12 @@ jobs:
         id: release-tag
         run: |
           echo "tag=$(echo '${{ github.event.head_commit.message }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}[a-z]{0,2}')" >> $GITHUB_OUTPUT \
-            && echo "major_tag=$(echo '${{ github.event.head_commit.message }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}')" >> $GITHUB_OUTPUT \
-            || echo "tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
+            && echo "major_tag=$(echo '${{ github.event.head_commit.message }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}')" >> $GITHUB_OUTPUT
 
-          echo "${{ steps.release-tag.outputs.tag }}"
-          echo "${{ steps.release-tag.outputs.major_tag }}"
+          if [ -z "$tag" ]; then
+            echo "tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
+          if [ -z "$major_tag" ]; then
+            echo "major_tag=$(echo '${{ github.sha }}')" >> $GITHUB_OUTPUT
 
       - name: Get Commits
         id: get-commits
