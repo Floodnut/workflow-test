@@ -1,0 +1,32 @@
+name: Update JSON File on Push to Main
+
+# Trigger the workflow on push to the main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Update JSON file
+        run: |
+          # Create or empty the JSON file
+          echo "{}" > affected.json
+
+          # Array containing the keys to add
+          array='[foo bar foobar]'
+
+          for app in "${array[@]}"; do
+            jq --arg app "$app" '.[$app] = "rmp-\($app):${{ github.sha }}"' affected.json > tmp.json
+            mv tmp.json affected.json
+          done
+
+          # Display the updated JSON file
+          echo "=============="
+          cat affected.json
