@@ -22,7 +22,7 @@ jobs:
           # Array containing the keys to add
           array='[foo bar foobar]'
 
-          for app in ${{ join(fromJson("[foo bar foobar]"), ' ') }}; do
+          for app in ${{ join(fromJson('[foo bar foobar]'), ' ') }}; do
             jq --arg app "$app" '.[$app] = "rmp-\($app):${{ github.sha }}"' affected.json > tmp.json
             mv tmp.json affected.json
           done
